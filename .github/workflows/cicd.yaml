@@ -1,0 +1,141 @@
+name: CI/CD
+
+on:
+  push:
+    branches:
+      - master
+      - releases/*
+    paths:
+      - ".github/**"
+      - "src/**"
+      - "test/**"
+      - "bench/**"
+      - "package.yaml"
+      - "stack*.yaml"
+      - "*.cabal"
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: 'Run the publish job'
+        type: boolean
+        required: true
+        default: false
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        resolver:
+          - stack-lts13
+          - stack-lts18
+          - stack-lts19
+
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: haskell/actions/setup@v2
+        id: setup-haskell
+        with:
+          enable-stack: true
+          stack-no-global: true
+
+      - name: Cache Stack
+        id: cache-stack
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.setup-haskell.outputs.stack-root }}
+          key: ${{ runner.os }}-${{ matrix.resolver }}-${{ hashFiles('**/package.yaml', '**/${{ matrix.resolver }}.yaml', '**/${{ matrix.resolver }}.yaml.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ matrix.resolver }}-
+
+      - name: Install dependencies
+        run: |
+          stack --system-ghc --stack-yaml=${{ matrix.resolver }}.yaml build \
+            --test --bench --only-dependencies
+
+      - name: Build
+        id: build
+        run: |
+          stack --system-ghc --stack-yaml=${{ matrix.resolver }}.yaml build \
+            --test --bench --no-run-tests  --no-run-benchmarks
+
+      - name: Test
+        run: |
+          stack --system-ghc --stack-yaml=${{ matrix.resolver }}.yaml build \
+            --test
+
+      - name: Benchmark
+        run: |
+          stack --system-ghc --stack-yaml=${{ matrix.resolver }}.yaml build \
+            --bench
+
+  lint:
+    runs-on: ubuntu-latest
+    name: Lint code
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up HLint
+        uses: haskell/actions/hlint-setup@v2
+
+      - name: Run HLint
+        uses: haskell/actions/hlint-run@v2
+        with:
+          path: '["src/", "test/", "bench/"]'
+          fail-on: warning
+
+  lint-commit:
+    name: Lint commits
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+  
+      - uses: wagoid/commitlint-github-action@v4
+
+  publish:
+    needs: [lint, lint-commit]
+    name: Publish
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    if: github.event.inputs.publish
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Covert pvp to semver
+        run: ./.github/scripts/pvp-to-semver.sh
+        shell: bash
+
+      - name: Generate changelog
+        uses: TriPSs/conventional-changelog-action@v3
+        id: changelog
+        if: steps.changelog.outputs.skipped != 'true'
+        with:
+          github-token: ${{ secrets.github_token }}
+          release-count: 0
+          version-file: package.yaml
+          skip-git-pull: true
+          pre-changelog-generation: ./.github/scripts/pre-changelog-gen.js
+          pre-commit: ./.github/scripts/pre-commit.js
+          fallback-version: '0.0.0'
+
+      - name: Create Release
+        uses: ncipollo/release-action@v1
+        if: steps.changelog.outputs.skipped != 'true'
+        with:
+          name: ${{ steps.changelog.outputs.tag }}
+          tag: ${{ steps.changelog.outputs.tag }}
+          body: ${{ steps.changelog.outputs.clean_changelog }}
+
+      - name: Upload Hackage candidate package
+        run: stack upload . --candidate
+        env:
+          HACKAGE_KEY: ${{ secrets.HACKAGE_KEY }}
