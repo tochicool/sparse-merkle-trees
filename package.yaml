@@ -1,0 +1,51 @@
+name: sparse-merkle-trees
+version: 0.1.0.0
+github: "tochicool/sparse-merkle-trees"
+license: BSD3
+author: "Tochi Obudulu"
+maintainer: "tochicool@gmail.com"
+copyright: "Copyright (c) 2022 Tochi Obudulu"
+extra-source-files:
+  - README.md
+  - CHANGELOG.md
+synopsis: Sparse Merkle trees with proofs of inclusion and exclusion
+category: Cryptography,Data Structures
+description: Please see the README on GitHub at <https://github.com/tochicool/sparse-merkle-trees#readme>
+dependencies:
+  - base >= 4.7 && < 5
+  - bytestring
+  - containers
+  - cryptonite
+  - memory
+ghc-options:
+  - -Wall
+library:
+  source-dirs: src
+tests:
+  sparse-merkle-trees-test:
+    main: Spec.hs
+    source-dirs: test
+    ghc-options:
+      - -threaded
+      - -rtsopts
+      - -with-rtsopts=-N
+    dependencies:
+      - sparse-merkle-trees
+      - tasty
+      - tasty-hunit
+      - tasty-smallcheck
+      - tasty-quickcheck
+      - smallcheck
+benchmarks:
+  sparse-merkle-trees-bench:
+    main: Main.hs
+    source-dirs: bench
+    ghc-options:
+      - -threaded
+      - -rtsopts
+      - -with-rtsopts=-N
+    dependencies:
+      - sparse-merkle-trees
+      - criterion
+      - deepseq
+      - QuickCheck
