@@ -36,10 +36,10 @@ library
   ghc-options: -Wall
   build-depends:
       base >=4.7 && <5
-    , bytestring
-    , containers
-    , cryptonite
-    , memory
+    , bytestring >=0.10 && <0.12
+    , containers ==0.6.*
+    , cryptonite >=0.25 && <0.31
+    , memory >=0.14 && <0.18
   default-language: Haskell2010
 
 test-suite sparse-merkle-trees-test
@@ -52,10 +52,10 @@ test-suite sparse-merkle-trees-test
   ghc-options: -Wall -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.7 && <5
-    , bytestring
-    , containers
-    , cryptonite
-    , memory
+    , bytestring >=0.10 && <0.12
+    , containers ==0.6.*
+    , cryptonite >=0.25 && <0.31
+    , memory >=0.14 && <0.18
     , smallcheck
     , sparse-merkle-trees
     , tasty
@@ -75,11 +75,11 @@ benchmark sparse-merkle-trees-bench
   build-depends:
       QuickCheck
     , base >=4.7 && <5
-    , bytestring
-    , containers
+    , bytestring >=0.10 && <0.12
+    , containers ==0.6.*
     , criterion
-    , cryptonite
+    , cryptonite >=0.25 && <0.31
     , deepseq
-    , memory
+    , memory >=0.14 && <0.18
     , sparse-merkle-trees
   default-language: Haskell2010

@@ -12,11 +12,11 @@ synopsis: Sparse Merkle trees with proofs of inclusion and exclusion
 category: Cryptography,Data Structures
 description: Please see the README on GitHub at <https://github.com/tochicool/sparse-merkle-trees#readme>
 dependencies:
-  - base >= 4.7 && < 5
-  - bytestring
-  - containers
-  - cryptonite
-  - memory
+  - base             >= 4.7  && < 5
+  - bytestring       >= 0.10 && < 0.12
+  - containers       >= 0.6  && < 0.7
+  - cryptonite       >= 0.25 && < 0.31
+  - memory           >= 0.14 && < 0.18
 ghc-options:
   - -Wall
 library:
