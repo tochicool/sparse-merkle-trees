@@ -99,7 +99,7 @@ jobs:
       - uses: wagoid/commitlint-github-action@v4
 
   publish:
-    needs: [lint, lint-commit]
+    needs: [lint, lint-commit, build]
     name: Publish
     runs-on: ubuntu-latest
     permissions:
