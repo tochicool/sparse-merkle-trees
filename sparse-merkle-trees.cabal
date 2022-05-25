@@ -28,8 +28,8 @@ source-repository head
 library
   exposed-modules:
       Crypto.Hash.CompactSparseMerkleTree
-      Crypto.Hash.CompactSparseMerkleTree.DataNode
   other-modules:
+      Crypto.Hash.CompactSparseMerkleTree.DataNode
       Paths_sparse_merkle_trees
   hs-source-dirs:
       src

@@ -21,6 +21,8 @@ ghc-options:
   - -Wall
 library:
   source-dirs: src
+  exposed-modules:
+  - Crypto.Hash.CompactSparseMerkleTree
 tests:
   sparse-merkle-trees-test:
     main: Spec.hs
