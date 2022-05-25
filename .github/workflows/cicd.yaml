@@ -136,6 +136,6 @@ jobs:
           body: ${{ steps.changelog.outputs.clean_changelog }}
 
       - name: Upload Hackage candidate package
-        run: stack upload . --candidate
+        run: stack --stack-yaml=stack-lts18.yaml upload . --candidate
         env:
           HACKAGE_KEY: ${{ secrets.HACKAGE_KEY }}
