@@ -1,5 +1,5 @@
 name: sparse-merkle-trees
-version: 0.1.1.0
+version: 0.2.0.0
 github: "tochicool/sparse-merkle-trees"
 license: BSD3
 author: "Tochi Obudulu"
@@ -22,7 +22,7 @@ ghc-options:
 library:
   source-dirs: src
   exposed-modules:
-  - Crypto.Hash.CompactSparseMerkleTree
+    - Crypto.Hash.CompactSparseMerkleTree
 tests:
   sparse-merkle-trees-test:
     main: Spec.hs
