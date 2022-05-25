@@ -100,7 +100,6 @@ module Crypto.Hash.CompactSparseMerkleTree
 
     -- ** Proof construction
     membershipProof,
-    hashLeaf,
 
     -- ** Proof verification
     MerkleRoot (..),
